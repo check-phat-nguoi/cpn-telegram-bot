@@ -4,7 +4,11 @@ version = "0.0.0"
 description = "Telegram bot for cpn"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["cpn-core==0.4.0", "python-telegram-bot>=21.10"]
+dependencies = [
+  "beanie>=1.29.0",
+  "cpn-core==0.4.0",
+  "python-telegram-bot>=21.10",
+]
 
 [project.scripts]
 cpn-tele-bot = "cpn_tele_bot:__main__.main"
