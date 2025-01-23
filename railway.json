@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "buildCommand": "pip install -e ."
+  },
+  "deploy": {
+    "startCommand": "python -m cpn-telegram-bot",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
