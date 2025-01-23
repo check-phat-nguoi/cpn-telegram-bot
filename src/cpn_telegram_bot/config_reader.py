@@ -1,4 +1,5 @@
 from os import environ
+from sys import stderr
 from typing import Final
 
 from dotenv import dotenv_values
@@ -14,9 +15,10 @@ def config_reader() -> ConfigModel:
                 **dotenv_values(".env"),
                 **environ,
             }
-        )  # pyright: ignore[reportArgumentType]
+        )
     except ValidationError as e:
-        print(f"Config read failed. {e}")
+        print("Failed to read the config!", file=stderr)
+        print(e, file=stderr)
         exit(1)
 
 
