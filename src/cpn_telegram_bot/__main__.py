@@ -1,7 +1,7 @@
 from telegram.ext import ApplicationBuilder, CommandHandler
 
-from cpn_tele_bot.bot.command_handlers.start import start
-from cpn_tele_bot.config_reader import config
+from cpn_telegram_bot.bot.command_handlers.start import start
+from cpn_telegram_bot.config_reader import config
 
 
 def main() -> None:
