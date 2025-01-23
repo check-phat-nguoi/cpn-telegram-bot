@@ -2,7 +2,6 @@
 .github/
 .ruff_cache/
 .vscode/
-.env
 .git
 .git/
 .pre-commit-config.yaml
