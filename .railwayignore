@@ -8,3 +8,5 @@ pyrightconfig.json
 renovate.json
 ruff.toml
 taplo.toml
+Dockerfile
+.dockerignore

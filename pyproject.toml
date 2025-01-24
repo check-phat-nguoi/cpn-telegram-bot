@@ -2,7 +2,7 @@
 name = "cpn-telegram-bot"
 version = "0.0.0"
 description = "Telegram bot for cpn"
-readme = "README.md"
+# readme = "README.md" # No define this because railway build docker that's suck
 authors = [
   { name = "KevinNitroG", email = "kevinnitro@duck.com" },
   { name = "NTGNguyen", email = 'ntgnguyen@duck.com' },
