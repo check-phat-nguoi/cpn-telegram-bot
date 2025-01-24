@@ -1,7 +1,8 @@
 default: run
 
 alias r := restore-env
-alias d := deploy
+alias d := deploy-docker-compose
+alias dr := deploy-railway
 
 restore-env:
   [ -d '.venv' ] || uv sync --all-extras --all-groups
@@ -9,7 +10,10 @@ restore-env:
 run:
   uv run cpn-telegram-bot
 
-deploy:
+deploy-docker-compose:
+  docker-compose up
+
+deploy-railway:
   railway up
 
 clean:

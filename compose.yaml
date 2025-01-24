@@ -6,12 +6,30 @@ services:
     restart: on-failure
     environment:
       DB_URI: mongodb://root:root@mongo:27017/
+    develop:
+      watch:
+        - path: src/
+          target: /app/src/
+          action: sync+restart
+        - path: pyproject.toml
+          target: /app/pyproject.toml
+          action: rebuild
+    depends_on:
+      db:
+        required: true
+        condition: service_started
+
   db:
     image: 'mongo:8'
     ports:
-      - 8081:8081
+      - 27017:27018
     restart: unless-stopped
+    volumes:
+      - db:/data/db
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
       ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+
+volumes:
+  db:

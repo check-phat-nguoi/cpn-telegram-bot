@@ -1,16 +1,10 @@
 .env
-.git
-.git/
 .github/
 .pre-commit-config.yaml
-.python-version
-.ruff_cache/
-.venv/
 .vscode/
 compose.yml
 justfile
 pyrightconfig.json
-railway.json
 renovate.json
 ruff.toml
 taplo.toml

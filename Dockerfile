@@ -6,8 +6,12 @@ RUN apk add --no-cache \
   tesseract-ocr \
   tesseract-ocr-data-eng
 
-COPY . /app/
+COPY --chown=cpn:cpn pyproject.toml README.md /app/
 
-RUN pip install -e .
+RUN pip install --no-cache-dir --disable-pip-version-check .
+
+COPY --chown=cpn:cpn src/ /app/
+
+RUN pip install --no-cache-dir --disable-pip-version-check -e .
 
 CMD [ "cpn-telegram-bot" ]
