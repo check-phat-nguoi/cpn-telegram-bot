@@ -3,7 +3,7 @@ name: cpn-telegram-bot
 services:
   bot:
     build: .
-    restart: on-failure
+    restart: unless-stopped
     environment:
       DB_URI: mongodb://root:root@mongo:27017/
     develop:
