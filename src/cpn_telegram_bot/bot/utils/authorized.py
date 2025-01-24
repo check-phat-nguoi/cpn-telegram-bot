@@ -8,9 +8,10 @@ from cpn_telegram_bot.entities.authorized_chat import AuthorizedChat
 
 
 async def is_authorized_chat(chat_id: int) -> bool:
+    print(await AuthorizedChat.find_all().to_list())
     return chat_id in config.AUTHORIZED_CHATS or (
         config.DB_URI is not None
-        and chat_id in await AuthorizedChat.find_all().to_list()
+        and AuthorizedChat.find_one(AuthorizedChat.chat_id == chat_id) is not None
     )
 
 

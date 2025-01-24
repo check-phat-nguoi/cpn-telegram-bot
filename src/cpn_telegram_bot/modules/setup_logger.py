@@ -1,8 +1,8 @@
-from logging import DEBUG, basicConfig
+from logging import INFO, basicConfig
 
 
 def setup_logger() -> None:
     basicConfig(
-        level=DEBUG,
+        level=INFO,
         format="[%(levelname)s]: %(message)s",
     )

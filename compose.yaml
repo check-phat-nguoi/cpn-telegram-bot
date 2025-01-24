@@ -16,7 +16,7 @@ services:
           target: /app/pyproject.toml
           action: rebuild
     volumes:
-      - .env:/app/.env
+      - ./.env:/app/.env
     depends_on:
       db:
         required: true
@@ -39,11 +39,13 @@ services:
 
   db:
     image: 'mongo:8'
+    command: --config /etc/mongod.conf
     ports:
       - 27017:27018
     restart: unless-stopped
     volumes:
       - db:/data/db
+      - ./mongod.conf:/etc/mongod.conf
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
