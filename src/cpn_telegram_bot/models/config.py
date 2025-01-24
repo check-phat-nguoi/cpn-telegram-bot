@@ -6,7 +6,9 @@ from pydantic import BaseModel, Field, field_validator
 BOT_TOKEN_PATTERN = re_compile(r"^[0-9]+:.+$")
 
 
-def _check_not_valid_id(id: str) -> bool:
+def _check_not_valid_id(id: str | int) -> bool:
+    if isinstance(id, int):
+        return False
     return not id.lstrip("-").isnumeric()
 
 

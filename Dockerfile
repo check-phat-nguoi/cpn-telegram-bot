@@ -10,7 +10,7 @@ COPY --chown=cpn:cpn pyproject.toml README.md /app/
 
 RUN pip install --no-cache-dir --disable-pip-version-check .
 
-COPY --chown=cpn:cpn src/ /app/
+COPY --chown=cpn:cpn src/ /app/src/
 
 RUN pip install --no-cache-dir --disable-pip-version-check -e .
 
