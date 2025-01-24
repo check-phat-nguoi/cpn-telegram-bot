@@ -1,4 +1,4 @@
-from asyncio import run
+from asyncio import Event, run
 
 from telegram.ext import ApplicationBuilder, CommandHandler
 
@@ -13,10 +13,11 @@ async def async_main() -> None:
         await app.start()
         if app.updater is None:
             return
-        await app.updater.start_polling()
-        await init_db()
         app.add_handler(CommandHandler("start", start_handler))
         app.add_handler(CommandHandler("info", info_handler))
+        await app.updater.start_polling()
+        await init_db()
+        await Event().wait()
         await app.updater.stop()
         await app.stop()
 

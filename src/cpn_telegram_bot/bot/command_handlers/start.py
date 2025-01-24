@@ -10,6 +10,8 @@ async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     if message is None or chat is None:
         return
     text: str = (
-        "Xin chào" if is_authorized_chat(chat.id) else "Bạn không có quyền nhắn với bot"
+        "Xin chào"
+        if await is_authorized_chat(chat.id)
+        else "Bạn không có quyền nhắn với bot"
     )
     await message.reply_text(text)

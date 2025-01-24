@@ -8,7 +8,9 @@ from cpn_telegram_bot.entities.sudo_user import SudoUser
 
 
 async def is_sudo(user_id: int) -> bool:
-    return user_id in config.OWNERS or user_id in await SudoUser.find_all().to_list()
+    return user_id in config.OWNERS or (
+        config.DB_URI is not None and user_id in await SudoUser.find_all().to_list()
+    )
 
 
 def sudo_decorator(func):
@@ -20,7 +22,7 @@ def sudo_decorator(func):
         if user is None:
             return
         user_id: int = user.id
-        if not is_sudo(user_id):
+        if not await is_sudo(user_id):
             print("Bạn không có quyền sử dụng lệnh này.")
             return
         return await func(update, context, *args, **kwargs)
