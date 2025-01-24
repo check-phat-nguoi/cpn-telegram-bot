@@ -1,9 +1,15 @@
-from telegram import Message, Update
+from telegram import Chat, Message, Update
 from telegram.ext import ContextTypes
 
+from cpn_telegram_bot.bot.utils.authorized import is_authorized_chat
 
-async def start(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+
+async def start_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     message: Message | None = update.message
-    if message is None:
+    chat: Chat | None = update.effective_chat
+    if message is None or chat is None:
         return
-    await message.reply_text("Xin chào")
+    text: str = (
+        "Xin chào" if is_authorized_chat(chat.id) else "Bạn không có quyền nhắn với bot"
+    )
+    await message.reply_text(text)

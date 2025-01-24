@@ -17,6 +17,10 @@ def config_reader() -> ConfigModel:
             }
         )
     except ValidationError as e:
+        print("Config contains unvalid field(s)!", file=stderr)
+        print(e, file=stderr)
+        exit(1)
+    except Exception as e:
         print("Failed to read the config!", file=stderr)
         print(e, file=stderr)
         exit(1)

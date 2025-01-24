@@ -1,6 +1,7 @@
 from re import compile as re_compile
 from typing import Any, Literal
 
+from cpn_core.types.api import ApiEnum
 from pydantic import BaseModel, Field, field_validator
 
 BOT_TOKEN_PATTERN = re_compile(r"^[0-9]+:.+$")
@@ -32,13 +33,28 @@ class ConfigModel(BaseModel):
         title="Bot token",
         description="Bot token lấy từ @BotFather",
     )
-    AUTHORIZED_CHATS: tuple[int, ...] | None = Field(
+    AUTHORIZED_CHATS: tuple[int, ...] = Field(
         title="Các Chat ID có quyền sử dụng bot",
         description="Các chat ID có quyền sử dụng bot",
     )
+    PLATES: tuple[int, ...] | None = Field(
+        title="Danh sách biển mặc định",
+        description="Các biển mặc định",
+        default=None,
+    )
+    APIS: tuple[ApiEnum, ...] = Field(
+        title="Danh sách API",
+        description="Các API sẽ được get fallback theo thứ tự. Mặc định sẽ là tất cả đều được fallback",
+        default=(
+            ApiEnum.phatnguoi_vn,
+            ApiEnum.checkphatnguoi_vn,
+            ApiEnum.zm_io_vn,
+            ApiEnum.csgt_vn,
+        ),
+    )
     DB_URI: str | None = Field(
         title="Database URI",
-        description="Database URI",
+        description="Database URI (Mongodb) để lưu trữ dữ liệu của bot sau khi custom. Trường hợp bot khởi động lại, server restart sẽ giữ được dữ liệu đã custom.",
         default=None,
     )
     PENDING_FINES_ONLY: bool = Field(
@@ -53,7 +69,7 @@ class ConfigModel(BaseModel):
     )
     REQUEST_TIMEOUT: int = Field(
         title="Thời gian request",
-        description="Thời gian (s) để gửi request đến server API và gửi notify message",
+        description="Thời gian (s) để gửi request đến server API",
         default=20,
     )
     TIME_FORMAT: Literal["12", "24"] = Field(
@@ -77,6 +93,18 @@ class ConfigModel(BaseModel):
             raise ValueError("Onwer ID must be integer form")
         return value
 
+    @field_validator("APIS", mode="before")
+    @classmethod
+    def _apis_before_validator(cls, value: Any) -> tuple[ApiEnum, ...]:
+        if isinstance(value, tuple):
+            return tuple(ApiEnum(api) for api in value)
+        elif isinstance(value, str):
+            apis: list[str] = value.split(" ")
+            return tuple(ApiEnum(api) for api in apis)
+        raise ValueError(
+            "APIS must be list of ApiEnum string or string of ApiEnums separated with space"
+        )
+
     @field_validator("BOT_TOKEN", mode="after")
     @classmethod
     def validate_bot_token(cls, value: str) -> str:
@@ -86,18 +114,14 @@ class ConfigModel(BaseModel):
 
     @field_validator("AUTHORIZED_CHATS", mode="before")
     @classmethod
-    def _authorized_chats_before_validator(cls, value: Any) -> tuple[int, ...] | None:
-        if value is None:
-            return
+    def _authorized_chats_before_validator(cls, value: Any) -> tuple[int, ...]:
         return _pipe_chat_id_strings(value)
 
     @field_validator("AUTHORIZED_CHATS", mode="after")
     @classmethod
     def _authorized_chats_after_validator(
-        cls, value: tuple[str, ...] | None
-    ) -> tuple[str, ...] | None:
-        if value is None:
-            return
+        cls, value: tuple[str, ...]
+    ) -> tuple[str, ...]:
         if any(filter(_check_not_valid_id, value)):
             raise ValueError("Authorized chat ID must be integer form")
         return value
