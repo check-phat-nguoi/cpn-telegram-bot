@@ -11,7 +11,7 @@ run:
   uv run cpn-telegram-bot
 
 deploy-docker-compose:
-  docker-compose up
+  docker-compose up --watch
 
 deploy-railway:
   railway up

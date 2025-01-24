@@ -57,6 +57,10 @@ class ConfigModel(BaseModel):
         description="Database URI (Mongodb) để lưu trữ dữ liệu của bot sau khi custom. Trường hợp bot khởi động lại, server restart sẽ giữ được dữ liệu đã custom.",
         default=None,
     )
+    LOCAL_BOT_API_URL: str | None = Field(
+        title="Tự host bot",
+        description="URL dẫn tới selfhost bot telegram (không phải con bot này mà là bot server...)",  # FIXME: the desc so bruh
+    )
     PENDING_FINES_ONLY: bool = Field(
         title="Lọc chưa nộp phạt",
         description="Chỉ lọc các thông tin vi phạm chưa nộp phạt",
