@@ -11,7 +11,11 @@ run:
   uv run cpn-telegram-bot
 
 dev-docker-compose:
-  docker-compose up --watch --build
+  docker compose up --watch --build
+
+# Clean old cached layer
+docker-prune:
+  docker container prune -f
 
 deploy-railway:
   railway up
