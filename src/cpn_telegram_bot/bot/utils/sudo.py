@@ -9,7 +9,8 @@ from cpn_telegram_bot.entities.sudo_user import SudoUser
 
 async def is_sudo(user_id: int) -> bool:
     return user_id in config.OWNERS or (
-        config.DB_URI is not None and user_id in await SudoUser.find_all().to_list()
+        config.DB_URI is not None
+        and SudoUser.find_one(SudoUser.user_id == user_id) is not None
     )
 
 
