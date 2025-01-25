@@ -13,9 +13,9 @@ run:
 dev-docker-compose:
   docker compose up --watch --build
 
-# Clean old cached layer
-docker-prune:
-  docker container prune -f
+# Clean docker: stopped containers, networks not used by at least one container, dangling images, unused build cache
+docker-clean:
+  docker system prune
 
 deploy-railway:
   railway up
