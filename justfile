@@ -1,7 +1,7 @@
 default: run
 
 alias r := restore-env
-alias d := deploy-docker-compose
+alias d := dev-docker-compose
 alias dr := deploy-railway
 
 restore-env:
@@ -10,7 +10,7 @@ restore-env:
 run:
   uv run cpn-telegram-bot
 
-deploy-docker-compose:
+dev-docker-compose:
   docker-compose up --watch --build
 
 deploy-railway:
