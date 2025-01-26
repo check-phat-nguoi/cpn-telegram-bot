@@ -1,6 +1,7 @@
 from cpn_core.get_data.base import BaseGetDataEngine
 from cpn_core.get_data.check_phat_nguoi import CheckPhatNguoiEngine
 from cpn_core.get_data.csgt import CsgtEngine
+from cpn_core.get_data.etraffic import EtrafficEngine
 from cpn_core.get_data.phat_nguoi import PhatNguoiEngine
 from cpn_core.get_data.zm_io import ZmioEngine
 from cpn_core.models.plate_info import PlateInfo
@@ -26,6 +27,15 @@ class GetData:
                     engine = PhatNguoiEngine(timeout=config.REQUEST_TIMEOUT)
                 case ApiEnum.zm_io_vn:
                     engine = ZmioEngine(timeout=config.REQUEST_TIMEOUT)
+                case ApiEnum.etraffic_gtelict_vn:
+                    if not config.ETRAFFIC_CITIZEN_ID or not config.ETRAFFIC_PASSWORD:
+                        # FIXME: handle later
+                        return None
+                    engine = EtrafficEngine(
+                        config.ETRAFFIC_CITIZEN_ID,
+                        config.ETRAFFIC_PASSWORD,
+                        timeout=config.REQUEST_TIMEOUT,
+                    )
             async with engine:
                 violation_details: (
                     tuple[ViolationDetail, ...] | None
@@ -55,6 +65,15 @@ class GetData:
                     engine = self._phatnguoi_engine
                 case ApiEnum.zm_io_vn:
                     engine = self._zmio_engine
+                case ApiEnum.etraffic_gtelict_vn:
+                    if not config.ETRAFFIC_CITIZEN_ID or not config.ETRAFFIC_PASSWORD:
+                        # FIXME: handle later
+                        return None
+                    engine = EtrafficEngine(
+                        config.ETRAFFIC_CITIZEN_ID,
+                        config.ETRAFFIC_PASSWORD,
+                        timeout=config.REQUEST_TIMEOUT,
+                    )
             async with engine:
                 violation_details: (
                     tuple[ViolationDetail, ...] | None

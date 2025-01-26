@@ -52,6 +52,11 @@ class ConfigModel(BaseModel):
             ApiEnum.csgt_vn,
         ),
     )
+    OPEN_FOR_PUBLIC: bool = Field(
+        title="Chế độ cộng đồng",
+        description="Không giới hạn chat mà bot có thể nhắn",
+        default=False,
+    )
     DB_URI: str | None = Field(
         title="Database URI",
         description="Database URI (Mongodb) để lưu trữ dữ liệu của bot sau khi custom. Trường hợp bot khởi động lại, server restart sẽ giữ được dữ liệu đã custom.",
@@ -60,6 +65,16 @@ class ConfigModel(BaseModel):
     LOCAL_BOT_API_URL: str | None = Field(
         title="Tự host bot",
         description="URL dẫn tới selfhost bot telegram (không phải con bot này mà là bot server...)",  # FIXME: the desc so bruh
+    )
+    ETRAFFIC_CITIZEN_ID: str | None = Field(
+        title="Etraffic căn cước",
+        description="Để sử dụng api etraffic cần cung cấp căn cước để đăng nhập",
+        default=None,
+    )
+    ETRAFFIC_PASSWORD: str | None = Field(
+        title="Etraffic mật khẩu",
+        description="Để sử dụng api etraffic cần cung cấp mật khẩu để đăng nhập",
+        default=None,
     )
     PENDING_FINES_ONLY: bool = Field(
         title="Lọc chưa nộp phạt",

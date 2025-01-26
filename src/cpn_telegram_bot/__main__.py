@@ -1,11 +1,13 @@
 from asyncio import Event, run
 from logging import getLogger
 
+from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler
 
-from cpn_telegram_bot.bot.command_handlers.auth import auth_chat_cov
-from cpn_telegram_bot.bot.command_handlers.info import info_handler
-from cpn_telegram_bot.bot.command_handlers.start import start_handler
+from cpn_telegram_bot.bot.handlers.auth import auth_chat_cov
+from cpn_telegram_bot.bot.handlers.deauth import deauth_chat_cov
+from cpn_telegram_bot.bot.handlers.info import info_handler
+from cpn_telegram_bot.bot.handlers.start import start_handler
 from cpn_telegram_bot.config_reader import config
 from cpn_telegram_bot.modules.setup_logger import setup_logger
 from cpn_telegram_bot.services.mongodb import init_db
@@ -25,7 +27,8 @@ async def async_main() -> None:
         app.add_handler(CommandHandler("start", start_handler))
         app.add_handler(CommandHandler("info", info_handler))
         app.add_handler(auth_chat_cov)
-        await app.updater.start_polling()
+        app.add_handler(deauth_chat_cov)
+        await app.updater.start_polling(allowed_updates=Update.ALL_TYPES)
         await init_db()
         logger.info("Bot started")
         await Event().wait()
