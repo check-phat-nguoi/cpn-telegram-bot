@@ -1,3 +1,6 @@
+from contextlib import nullcontext
+from logging import getLogger
+
 from cpn_core.get_data.base import BaseGetDataEngine
 from cpn_core.get_data.check_phat_nguoi import CheckPhatNguoiEngine
 from cpn_core.get_data.csgt import CsgtEngine
@@ -7,8 +10,9 @@ from cpn_core.get_data.zm_io import ZmioEngine
 from cpn_core.models.plate_info import PlateInfo
 from cpn_core.models.violation_detail import ViolationDetail
 from cpn_core.types.api import ApiEnum
-
 from cpn_telegram_bot.config_reader import config
+
+logger = getLogger(__name__)
 
 
 class GetData:
@@ -44,10 +48,28 @@ class GetData:
                     return violation_details
 
     def __init__(self, plate_infos: tuple[PlateInfo, ...]) -> None:
-        self._checkphatnguoi_engine: CheckPhatNguoiEngine
-        self._csgt_engine: CsgtEngine
-        self._phatnguoi_engine: PhatNguoiEngine
-        self._zmio_engine: ZmioEngine
+        self._checkphatnguoi_engine: CheckPhatNguoiEngine = CheckPhatNguoiEngine(
+            timeout=config.REQUEST_TIMEOUT,
+        )
+        self._csgt_engine: CsgtEngine = CsgtEngine(
+            timeout=config.REQUEST_TIMEOUT,
+        )
+        self._phatnguoi_engine: PhatNguoiEngine = PhatNguoiEngine(
+            timeout=config.REQUEST_TIMEOUT,
+        )
+        self._zmio_engine: ZmioEngine = ZmioEngine(
+            timeout=config.REQUEST_TIMEOUT,
+        )
+        self._etraffic_engine: EtrafficEngine | None = (
+            EtrafficEngine(
+                citizen_indentify=config.ETRAFFIC_CITIZEN_ID,
+                password=config.ETRAFFIC_PASSWORD,
+                timeout=config.REQUEST_TIMEOUT,
+            )
+            if config.ETRAFFIC_CITIZEN_ID is not None
+            and config.ETRAFFIC_PASSWORD is not None
+            else None
+        )
         self._plate_infos: tuple[PlateInfo, ...] = plate_infos
 
     async def _get_data_for_plate(
@@ -66,14 +88,14 @@ class GetData:
                 case ApiEnum.zm_io_vn:
                     engine = self._zmio_engine
                 case ApiEnum.etraffic_gtelict_vn:
-                    if not config.ETRAFFIC_CITIZEN_ID or not config.ETRAFFIC_PASSWORD:
-                        # FIXME: handle later
-                        return None
-                    engine = EtrafficEngine(
-                        config.ETRAFFIC_CITIZEN_ID,
-                        config.ETRAFFIC_PASSWORD,
-                        timeout=config.REQUEST_TIMEOUT,
-                    )
+                    if not self._etraffic_engine:
+                        logger.error(
+                            "Plate %s - %s: You haven't given citizen ID and password!",
+                            plate_info.plate,
+                            ApiEnum.etraffic_gtelict_vn,
+                        )
+                        return
+                    engine = self._etraffic_engine
             async with engine:
                 violation_details: (
                     tuple[ViolationDetail, ...] | None
@@ -95,6 +117,9 @@ class GetData:
             ZmioEngine(
                 timeout=config.REQUEST_TIMEOUT,
             ) as self._zmio_engine,
+            self._etraffic_engine
+            if self._etraffic_engine is not None
+            else nullcontext(),
         ):
             return tuple(
                 [

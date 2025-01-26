@@ -42,7 +42,7 @@ async def _auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | Non
         )
         return ConversationHandler.END
 
-    if len(args) == 0:
+    if not args:
         await message.reply_text(
             "Để thêm Chat ID xác thực cho bot, nhập theo cú pháp `/auth -1230982 123192834`.\n"
             "Lưu ý không có quyền sửa đổi chat ID đã khai báo trong config.",

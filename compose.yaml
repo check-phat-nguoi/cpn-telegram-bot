@@ -2,7 +2,8 @@ name: cpn-telegram-bot
 
 services:
   cpn:
-    build: .
+    build:
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       DB_URI: 'mongodb://root:example@db:27017'
@@ -10,6 +11,9 @@ services:
     develop:
       watch:
         - path: src/
+          target: /app/src/
+          action: sync+restart
+        - path: ./../core/src/
           target: /app/src/
           action: sync+restart
         - path: pyproject.toml

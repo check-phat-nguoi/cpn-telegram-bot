@@ -15,4 +15,4 @@ COPY --chown=cpn:cpn src/ /app/src/
 
 RUN pip install --no-cache-dir --disable-pip-version-check --no-dependencies --editable .
 
-CMD [ "python", "/app/src/cpn_telegram_bot/__main__.py" ]
+CMD [ "cpn-telegram-bot" ]

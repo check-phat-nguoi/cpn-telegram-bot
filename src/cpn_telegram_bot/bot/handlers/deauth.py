@@ -42,7 +42,7 @@ async def _deauth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | N
         )
         return ConversationHandler.END
 
-    if len(args) == 0:
+    if not args:
         await message.reply_text(
             "Để hủy xác thực Chat ID cho bot, nhập theo cú pháp `/deauth -1230982 123192834`",
             parse_mode=ParseMode.MARKDOWN_V2,

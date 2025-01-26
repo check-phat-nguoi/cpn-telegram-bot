@@ -5,6 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler
 
 from cpn_telegram_bot.bot.handlers.auth import auth_chat_cov
+from cpn_telegram_bot.bot.handlers.check import check_handler
 from cpn_telegram_bot.bot.handlers.deauth import deauth_chat_cov
 from cpn_telegram_bot.bot.handlers.info import info_handler
 from cpn_telegram_bot.bot.handlers.start import start_handler
@@ -26,6 +27,7 @@ async def async_main() -> None:
             return
         app.add_handler(CommandHandler("start", start_handler))
         app.add_handler(CommandHandler("info", info_handler))
+        app.add_handler(CommandHandler("check", check_handler))
         app.add_handler(auth_chat_cov)
         app.add_handler(deauth_chat_cov)
         await app.updater.start_polling(allowed_updates=Update.ALL_TYPES)
