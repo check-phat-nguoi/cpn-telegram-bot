@@ -41,7 +41,7 @@ services:
     image: 'mongo:8'
     command: --config /etc/mongod.conf
     ports:
-      - 27017:27018
+      - 27017:27017
     restart: unless-stopped
     volumes:
       - db:/data/db

@@ -44,33 +44,44 @@ async def _auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | Non
 
     if len(args) == 0:
         await message.reply_text(
-            "Để thêm Chat ID xác thực cho bot, nhập theo cú pháp `/auth -1230982 123192834`",
+            "Để thêm Chat ID xác thực cho bot, nhập theo cú pháp `/auth -1230982 123192834`.\n"
+            "Lưu ý không có quyền sửa đổi chat ID đã khai báo trong config.",
             parse_mode=ParseMode.MARKDOWN_V2,
         )
         return ConversationHandler.END
 
     chat_ids: tuple[int, ...] = tuple(
-        int(chat_id) for chat_id in args if chat_id not in config.AUTHORIZED_CHATS
+        chat_id
+        for chat_id in (int(chat_id) for chat_id in args)
+        if chat_id not in config.AUTHORIZED_CHATS
     )
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                ConfirmEnum.CONFIRM.value, callback_data=ConfirmEnum.CONFIRM.name
-            ),
-            InlineKeyboardButton(
-                ConfirmEnum.CANCEL.value, callback_data=ConfirmEnum.CANCEL.name
-            ),
+
+    if not chat_ids:
+        await message.reply_text(
+            "Không còn chat ID nào sau khi đã lọc.",
+            parse_mode=ParseMode.MARKDOWN_V2,
+        )
+        return ConversationHandler.END
+    else:
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    ConfirmEnum.CONFIRM.value, callback_data=ConfirmEnum.CONFIRM.name
+                ),
+                InlineKeyboardButton(
+                    ConfirmEnum.CANCEL.value, callback_data=ConfirmEnum.CANCEL.name
+                ),
+            ]
         ]
-    ]
-    reply_markup: InlineKeyboardMarkup = InlineKeyboardMarkup(keyboard)
-    user_data["auth_chat_ids"] = chat_ids
-    markup_chat_ids: str = ", ".join(f"`{chat_id}`" for chat_id in chat_ids)
-    await message.reply_text(
-        f"Xác thực các Chat ID: {markup_chat_ids}",
-        reply_markup=reply_markup,
-        parse_mode=ParseMode.MARKDOWN_V2,
-    )
-    return CONFIRM_STAGE
+        reply_markup: InlineKeyboardMarkup = InlineKeyboardMarkup(keyboard)
+        user_data["auth_chat_ids"] = chat_ids
+        markup_chat_ids: str = ", ".join(f"`{chat_id}`" for chat_id in chat_ids)
+        await message.reply_text(
+            f"Xác thực các Chat ID: {markup_chat_ids}",
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.MARKDOWN_V2,
+        )
+        return CONFIRM_STAGE
 
 
 async def _confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
@@ -89,7 +100,7 @@ async def _confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | 
         logger.warning(
             "There might be already authorized chat(s) or unknown error. %s", e
         )
-    await query.edit_message_text(text="Đã thêm các Chat ID!", reply_markup=None)
+    await query.edit_message_text(text="Đã thêm các Chat ID!")
     return ConversationHandler.END
 
 
@@ -105,9 +116,7 @@ async def _cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | N
         str(chat_ids),
     )
     user_data.clear()
-    await query.edit_message_text(
-        text="Đã hủy thêm xác thực các Chat ID", reply_markup=None
-    )
+    await query.edit_message_text(text="Đã hủy thêm xác thực các Chat ID")
     return ConversationHandler.END
 
 

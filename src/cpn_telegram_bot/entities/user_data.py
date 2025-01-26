@@ -17,3 +17,4 @@ class UserData(Document):
                 [("user_id", TEXT)],
             ),
         ]
+        name: str = "user_datas"

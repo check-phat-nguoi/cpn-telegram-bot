@@ -50,7 +50,9 @@ async def _deauth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | N
         return ConversationHandler.END
 
     chat_ids: tuple[int, ...] = tuple(
-        int(chat_id) for chat_id in args if chat_id not in config.AUTHORIZED_CHATS
+        chat_id
+        for chat_id in (int(chat_id) for chat_id in args)
+        if chat_id not in config.AUTHORIZED_CHATS
     )
     keyboard = [
         [
@@ -80,14 +82,12 @@ async def _confirm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | 
         return
     await query.answer()
     chat_ids: tuple[int, ...] = user_data["deauth_chat_ids"]
-    user_data.clear()
     try:
-        AuthorizedChat.find(In(AuthorizedChat.chat_id, chat_ids)).delete_many()
+        await AuthorizedChat.find(In(AuthorizedChat.chat_id, chat_ids)).delete()
     except Exception as e:
         logger.error("Error occurred while deauthorize chat IDs. %s", e)
-    await query.edit_message_text(
-        text="Đã hủy xác thực các Chat ID!", reply_markup=None
-    )
+    user_data.clear()
+    await query.edit_message_text(text="Đã hủy xác thực các Chat ID!")
     return ConversationHandler.END
 
 
@@ -98,9 +98,7 @@ async def _cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | N
         return
     await query.answer()
     user_data.clear()
-    await query.edit_message_text(
-        text="Đã hủy hủy xác thực các Chat ID", reply_markup=None
-    )
+    await query.edit_message_text(text="Đã hủy hủy xác thực các Chat ID")
     return ConversationHandler.END
 
 

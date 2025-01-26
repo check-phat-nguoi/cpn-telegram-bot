@@ -12,6 +12,6 @@ async def init_db() -> None:
         return
     client = AsyncIOMotorClient(config.DB_URI)
     await init_beanie(
-        database=client.db_name,
+        database=client.cpn,
         document_models=[UserData, AuthorizedChat, SudoUser],
     )
