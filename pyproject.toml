@@ -16,7 +16,7 @@ maintainers = [
 requires-python = ">=3.13"
 dependencies = [
   "beanie>=1.29.0",
-  "cpn-core[ocr]==0.5.0",
+  "cpn-core[ocr,curl]==0.5.0",
   "pydantic>=2.10.5",
   "python-dotenv>=1.0.1",
   "python-telegram-bot>=21.10",

@@ -65,6 +65,7 @@ class ConfigModel(BaseModel):
     LOCAL_BOT_API_URL: str | None = Field(
         title="Tự host bot",
         description="URL dẫn tới selfhost bot telegram (không phải con bot này mà là bot server...)",  # FIXME: the desc so bruh
+        default=None,
     )
     ETRAFFIC_CITIZEN_ID: str | None = Field(
         title="Etraffic căn cước",
